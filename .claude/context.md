@@ -2,29 +2,26 @@
 
 ## Build environment
 
-The project targets Java 25 (`<release>25</release>` in root `pom.xml`).
-Java 25 JDK is installed at `/usr/lib/jvm/java-25-openjdk-amd64`.
+Requires **JDK 25** and **Maven 4**. The Temurin distribution is recommended (see `DEVELOPING.md`).
 
-**Maven version:** `protobuf-maven-plugin:5.1.4` (used in `dex/dex-api`) requires the Maven 4 API and crashes on Maven 3.9.x with a `NullInjectedIntoNonNullable` error on `ProtocResolver`. Use **Maven 4** for all builds:
+`protobuf-maven-plugin:5.1.4` (in `dex/dex-api`) uses the Maven 4 API and crashes on Maven 3.9.x with `NullInjectedIntoNonNullable` on `ProtocResolver`. Maven 3.9 is what most distro package managers install — it will not work. Get Maven 4:
 
 ```bash
-# Maven 4 RC5 is available at /tmp/apache-maven-4.0.0-rc-5/bin/mvn
-# (downloaded during initial setup — re-download if gone)
 curl -sL "https://downloads.apache.org/maven/maven-4/4.0.0-rc-5/binaries/apache-maven-4.0.0-rc-5-bin.tar.gz" \
-  | tar xzf - -C /tmp/
+  | tar xzf - -C /opt/
+export MVN=/opt/apache-maven-4.0.0-rc-5/bin/mvn
 ```
 
-Use `/tmp/apache-maven-4.0.0-rc-5/bin/mvn` instead of `mvn` for any build or test command.
-`make` targets use the system `mvn` (3.9.x) and will fail on `dex-api` — run Maven directly instead:
+The `make` targets hardcode the system `mvn`, so run Maven directly:
 
 ```bash
 # Run a single test
-/tmp/apache-maven-4.0.0-rc-5/bin/mvn -B -q -Dsurefire.useFile=false test \
+$MVN -B -q -Dsurefire.useFile=false test \
   -Dmaven.build.cache.enabled=false -Dcheckstyle.skip -Dcyclonedx.skip \
   -pl apiserver -am -Dtest="SomeTest"
 
 # Build Docker image
-/tmp/apache-maven-4.0.0-rc-5/bin/mvn -B -q -Pquick package -pl apiserver -am
+$MVN -B -q -Pquick package -pl apiserver -am
 docker build -f apiserver/src/main/docker/Dockerfile -t dependencytrack/apiserver:local apiserver/
 ```
 
