@@ -2,7 +2,7 @@
 
 ## Build environment
 
-Requires **JDK 25** and **Maven 4**. The Temurin distribution is recommended (see `DEVELOPING.md`).
+Requires **JDK 25** and **Maven 4**. The Temurin distribution is recommended (see `DEVELOPING.md`), but the user prefers installing from the Linux distro repo (`sudo apt install openjdk-25-jdk`) when available.
 
 `protobuf-maven-plugin:5.1.4` (in `dex/dex-api`) uses the Maven 4 API and crashes on Maven 3.9.x with `NullInjectedIntoNonNullable` on `ProtocResolver`. Maven 3.9 is what most distro package managers install — it will not work. Get Maven 4:
 
